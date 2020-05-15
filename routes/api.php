@@ -2,6 +2,7 @@
 
 use App\User;
 use App\Machines;
+use App\Jobs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -56,6 +57,10 @@ Route::middleware(['auth:api'])->group(function (){
 
     Route::middleware(['scope:admin, manager, engineer, maintenance, operator'])->get('/machines', function(Request $request) {
         return Machines::get();
+    });
+
+    Route::middleware(['scope:admin, manager, engineer, maintenance, operator'])->get('/jobs', function(Request $request) {
+        return Jobs::get();
     });
 });
 
