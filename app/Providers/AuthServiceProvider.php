@@ -29,7 +29,10 @@ class AuthServiceProvider extends ServiceProvider
         Passport::routes();
 
         Passport::tokensCan([
-            'admin' => 'Add/Edit/Delete Users',
+            'admin' => 'Edit/Delete Users primarily',
+            'manager' => 'Edit/Create Jobs',
+            'engineer' => 'Edit/Create information for job/machine',
+            'maintenance' => 'Edit/View Maintenance requests',
             'operator' => 'Basic use of website'
         ]);
 
