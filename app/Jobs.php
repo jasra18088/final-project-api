@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Jobs extends Model
 {
+    
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'machine_id', 'material_type_id'
+    ];
+
     public function machine() {
         return $this->belongsTo(Machines::class, 'machine_id');
     }

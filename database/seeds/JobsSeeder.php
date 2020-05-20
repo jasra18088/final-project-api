@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Jobs;
 use App\Machines;
 use App\MaterialType;
 
@@ -18,10 +19,20 @@ class JobsSeeder extends Seeder
         $materialType = MaterialType::get()->all();
 
         for ($i = 0; $i < 25; $i++) {
-            DB::table('jobs')->insert(
+            $machineID = $machines[array_rand($machines)]->id;
+            $materialID = $materialType[array_rand($materialType)]->id;
+
+            if (Jobs::get()->where('machine_id', $machineID)->count() >= 1) {
+                $priority = Jobs::where('machine_id', '=', $machineID)->orderBy('priority', 'desc')->first()->priority + 1;
+            } else {
+                $priority = 1;
+            }
+
+            Jobs::create(
                 [
-                    'machine_id' => $machines[array_rand($machines)]->id,
-                    'material_type_id' => $machines[array_rand($materialType)]->id,
+                    'machine_id' => $machineID,
+                    'material_type_id' => $materialID,
+                    'priority' => $priority
                 ]
             );
         }

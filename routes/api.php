@@ -3,6 +3,8 @@
 use App\User;
 use App\Machines;
 use App\Jobs;
+use App\MaterialType;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -55,12 +57,20 @@ Route::middleware(['auth:api'])->group(function (){
         return response()->json(['message'=>'User deleted successfully.']);
     });
 
-    Route::middleware(['scope:admin, manager, engineer, maintenance, operator'])->get('/machines', function(Request $request) {
+    Route::middleware(['scope:admin,manager,engineer,maintenance,operator'])->get('/machines', function(Request $request) {
         return Machines::get();
     });
 
-    Route::middleware(['scope:admin, manager, engineer, maintenance, operator'])->get('/jobs', function(Request $request) {
-        return Jobs::get();
+    Route::middleware(['scope:admin,manager,engineer,maintenance,operator'])->get('/material_types', function(Request $request) {
+        return MaterialType::get();
+    });
+    
+    Route::middleware(['scope:admin,manager,engineer,maintenance,operator'])->get('/jobs', function(Request $request) {
+        return Jobs::with(['machine', 'materialType'])->orderBy('priority', 'asc')->get();
+    });
+
+    Route::middleware(['scope:admin,manager,'])->post('/newJob', function(Request $request) {
+        return Jobs::create($request->all());
     });
 });
 
