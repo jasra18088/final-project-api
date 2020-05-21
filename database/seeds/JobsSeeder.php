@@ -32,7 +32,8 @@ class JobsSeeder extends Seeder
                 [
                     'machine_id' => $machineID,
                     'material_type_id' => $materialID,
-                    'priority' => $priority
+                    'priority' => $priority,
+                    'job_status' => 'planned'
                 ]
             );
         }
