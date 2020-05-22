@@ -1,5 +1,6 @@
 <?php
 
+use App\Downtime;
 use App\User;
 use App\Machines;
 use App\Jobs;
@@ -8,6 +9,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+// header('Access-Control-Allow-Origin: https://final-project-838f4.web.app');
 
 /*
 |--------------------------------------------------------------------------
@@ -107,6 +109,35 @@ Route::middleware(['auth:api'])->group(function (){
 
     Route::middleware(['scope:admin,manager,operator'])->put('/job/{jobID}/stopJob', function(Request $request, $jobID) {
         DB::table('jobs')->where('id', $jobID)->update(['end_time' => now(), 'job_status' => 'stopped']);
+    });
+
+    Route::middleware(['scope:admin,manager,operator'])->post('/job/addDowntime', function(Request $request) {
+        Downtime::create([
+            'user_id' => $request->user_id,
+            'job_id' => $request->job_id,
+            'description' => $request->description,
+            'amount' => $request->amount,
+        ]);
+
+        return Downtime::with('user')->where('job_id', $request->job_id)->get();
+    });
+
+    Route::middleware(['scope:admin,manager,engineer,maintenance,operator'])->get('/downtime/{jobID}', function(Request $request, $jobID) {
+        return Downtime::with('user')->where('job_id', $jobID)->get();
+    });
+
+    Route::middleware(['scope:admin,manager,engineer,maintenance,operator'])->put('/updateDowntime/{downtimeID}', function(Request $request, $downtimeID) {
+        DB::table('downtimes')->where('id', $downtimeID)->update(['description' => $request->description, 'amount' => $request->amount]);
+
+        return Downtime::with('user')->where('job_id', $request->jobID)->get();
+    });
+
+    Route::middleware(['scope:admin,manager,engineer,maintenance,operator'])->delete('/deleteDowntime/{downtimeID}', function(Request $request, $downtimeID) {
+        $jobID = Downtime::where('id', $downtimeID)->first()->job_id;
+
+        DB::table('downtimes')->where('id', $downtimeID)->delete();
+
+        return Downtime::with('user')->where('job_id', $jobID)->get();
     });
 });
 

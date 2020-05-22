@@ -11,6 +11,10 @@ class User extends Authenticatable
 {
     use Notifiable, HasApiTokens;
 
+    public function downtime() {
+        return $this->hasMany(Downtime::class);
+    }
+
     /**
      * The attributes that are mass assignable.
      *

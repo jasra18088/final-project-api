@@ -24,4 +24,8 @@ class Jobs extends Model
         return $this->belongsTo(MaterialType::class, 'material_type_id');
     }
 
+    public function downtime() {
+        return $this->hasMany(Downtime::class);
+    }
+
 }
